@@ -2,6 +2,7 @@ const chaiHttp = require("chai-http");
 const chai = require("chai");
 const assert = chai.assert;
 const server = require("../server");
+const IssueDAO = require("../dao/dao");
 
 chai.use(chaiHttp);
 
@@ -111,5 +112,28 @@ suite("Functional Tests", function () {
         assert.isEmpty(res.body);
         done();
       });
+  });
+
+  // 7
+  test("Update one field on an issue", function (done) {
+    let test_data = {
+      issue_title: "Test Title",
+      issue_text: "Test Text",
+      created_by: "Haroun",
+    };
+
+    IssueDAO.createIssue(test_data, (err, added_data) => {
+      // Update issue
+      chai
+        .request(server)
+        .put("/api/issues/test")
+        .send({ _id: added_data._id, issue_title: "Test Title Updated" })
+        .end(function (error, res) {
+          assert.equal(res.status, 200);
+          assert.isObject(res.body);
+          assert.equal(res.body.result, "successfully updated");
+          done();
+        });
+    });
   });
 });

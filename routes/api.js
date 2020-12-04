@@ -2,6 +2,17 @@
 
 const IssueDAO = require("../dao/dao.js");
 
+function makeUpdateObj(obj) {
+  let returnObj = {};
+  for (var key in obj) {
+    if (obj[key] != "") {
+      returnObj[key] = obj[key];
+    }
+  }
+
+  return returnObj;
+}
+
 module.exports = function (app) {
   app
     .route("/api/issues/:project")
@@ -57,6 +68,29 @@ module.exports = function (app) {
 
     .put(function (req, res) {
       let project = req.params.project;
+      let updateObj = {};
+      if (!req.body._id) {
+        res.json({ error: "missing _id" });
+      }
+      console.log(req.body);
+      //Object.assign(updateObj, req.body);
+      updateObj = makeUpdateObj(req.body);
+      delete updateObj._id;
+      if (Object.keys(updateObj).length < 1) {
+        res.json({
+          error: "no update field(s) sent",
+          _id: req.body._id,
+        });
+      } else {
+        updateObj["updated_on"] = new Date().toUTCString();
+        IssueDAO.updateIssue(req.body._id, updateObj, (err, data) => {
+          if (err) {
+            res.json({ error: "could not update", _id: req.body._id });
+          } else {
+            res.json({ result: "successfully updated", _id: data._id });
+          }
+        });
+      }
     })
 
     .delete(function (req, res) {
