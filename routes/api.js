@@ -10,6 +10,15 @@ module.exports = function (app) {
     })
 
     .post(function (req, res) {
+      // Check if required fields are missing
+      if (
+        !req.body.issue_title ||
+        !req.body.issue_text ||
+        !req.body.created_by
+      ) {
+        return res.json("Required fields missing from request");
+      }
+
       let project = req.params.project;
       let issueObj = {};
       issueObj["issue_title"] = req.body.issue_title;
