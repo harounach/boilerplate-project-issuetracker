@@ -73,16 +73,28 @@ suite("Functional Tests", function () {
 
   // 4
   test("View issues on a project", function (done) {
-    let test_data = {
-      created_by: "Haroun",
-    };
-
     chai
       .request(server)
       .get("/api/issues/test")
       .end(function (err, res) {
         assert.equal(res.status, 200);
         assert.isArray(res.body);
+        done();
+      });
+  });
+
+  // 5
+  test("View issues on a project with one filter", function (done) {
+    chai
+      .request(server)
+      .get("/api/issues/test")
+      .query({ created_by: "Haroun" })
+      .end(function (err, res) {
+        assert.equal(res.status, 200);
+        assert.isArray(res.body);
+        res.body.forEach((issue) => {
+          assert.include(issue, { created_by: "Haroun" });
+        });
         done();
       });
   });

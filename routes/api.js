@@ -7,7 +7,10 @@ module.exports = function (app) {
     .route("/api/issues/:project")
     .get(function (req, res) {
       let project = req.params.project;
-      IssueDAO.getIssues(project, (err, data) => {
+      let filterObj = {};
+      Object.assign(filterObj, req.query);
+      filterObj["project"] = project;
+      IssueDAO.getIssues(filterObj, (err, data) => {
         if (err) {
           console.error(err);
           res.json({ error: "Something went wrong" });

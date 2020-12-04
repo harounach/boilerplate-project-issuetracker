@@ -59,8 +59,8 @@ module.exports = {
   },
 
   // Get all issues
-  getIssues: function (project, done) {
-    Issue.find({ project: project }, (err, data) => {
+  getIssues: function (filterObj, done) {
+    Issue.find(filterObj, (err, data) => {
       if (err) {
         /* FAILURE */
         console.error(err);
