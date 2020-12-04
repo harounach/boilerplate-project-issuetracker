@@ -136,4 +136,31 @@ suite("Functional Tests", function () {
         });
     });
   });
+
+  // 8
+  test("Update multiple fields on an issue", function (done) {
+    let test_data = {
+      issue_title: "Test Title",
+      issue_text: "Test Text",
+      created_by: "Haroun",
+    };
+
+    IssueDAO.createIssue(test_data, (err, added_data) => {
+      // Update issue
+      chai
+        .request(server)
+        .put("/api/issues/test")
+        .send({
+          _id: added_data._id,
+          issue_title: "Test Title Updated",
+          issue_text: "Test Text Updated",
+        })
+        .end(function (error, res) {
+          assert.equal(res.status, 200);
+          assert.isObject(res.body);
+          assert.equal(res.body.result, "successfully updated");
+          done();
+        });
+    });
+  });
 });
