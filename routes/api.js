@@ -7,6 +7,15 @@ module.exports = function (app) {
     .route("/api/issues/:project")
     .get(function (req, res) {
       let project = req.params.project;
+      IssueDAO.getIssues(project, (err, data) => {
+        if (err) {
+          console.error(err);
+          res.json({ error: "Something went wrong" });
+        } else {
+          console.log(data);
+          res.json(data);
+        }
+      });
     })
 
     .post(function (req, res) {
@@ -16,7 +25,7 @@ module.exports = function (app) {
         !req.body.issue_text ||
         !req.body.created_by
       ) {
-        return res.json("Required fields missing from request");
+        return res.json({ error: "required field(s) missing" });
       }
 
       let project = req.params.project;

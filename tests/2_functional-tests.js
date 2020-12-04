@@ -57,7 +57,7 @@ suite("Functional Tests", function () {
   // 3
   test("Create an issue with missing required fields", function (done) {
     let test_data = {
-      issue_title: "Test Title",
+      created_by: "Haroun",
     };
 
     chai
@@ -66,7 +66,23 @@ suite("Functional Tests", function () {
       .send(test_data)
       .end(function (err, res) {
         assert.equal(res.status, 200);
-        assert.equal(res.body, "Required fields missing from request");
+        assert.equal(res.body.error, "required field(s) missing");
+        done();
+      });
+  });
+
+  // 4
+  test("View issues on a project", function (done) {
+    let test_data = {
+      created_by: "Haroun",
+    };
+
+    chai
+      .request(server)
+      .get("/api/issues/test")
+      .end(function (err, res) {
+        assert.equal(res.status, 200);
+        assert.isArray(res.body);
         done();
       });
   });

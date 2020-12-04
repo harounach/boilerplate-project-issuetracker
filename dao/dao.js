@@ -59,7 +59,16 @@ module.exports = {
   },
 
   // Get all issues
-  getIssues: function (filterObj, done) {
-    // TODO
+  getIssues: function (project, done) {
+    Issue.find({ project: project }, (err, data) => {
+      if (err) {
+        /* FAILURE */
+        console.error(err);
+        done(err);
+      } else {
+        /* SUCCESS */
+        done(null, data);
+      }
+    });
   },
 };
