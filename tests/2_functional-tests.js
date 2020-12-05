@@ -163,4 +163,18 @@ suite("Functional Tests", function () {
         });
     });
   });
+
+  // 9
+  test("Update an issue with missing _id", function (done) {
+    chai
+      .request(server)
+      .put("/api/issues/test")
+      .send({})
+      .end(function (error, res) {
+        assert.equal(res.status, 200);
+        assert.isObject(res.body);
+        assert.equal(res.body.error, "missing _id");
+        done();
+      });
+  });
 });
