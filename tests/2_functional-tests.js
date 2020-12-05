@@ -245,4 +245,18 @@ suite("Functional Tests", function () {
         done();
       });
   });
+
+  // 14
+  test("Delete an issue with an invalid _id", function (done) {
+    chai
+      .request(server)
+      .delete("/api/issues/test")
+      .send({})
+      .end(function (error, res) {
+        assert.equal(res.status, 200);
+        assert.isObject(res.body);
+        assert.equal(res.body.error, "missing _id");
+        done();
+      });
+  });
 });
