@@ -177,4 +177,32 @@ suite("Functional Tests", function () {
         done();
       });
   });
+
+  // 10
+  test("Update an issue with no fields to update", function (done) {
+    chai
+      .request(server)
+      .put("/api/issues/test")
+      .send({ _id: "random_id" })
+      .end(function (error, res) {
+        assert.equal(res.status, 200);
+        assert.isObject(res.body);
+        assert.equal(res.body.error, "no update field(s) sent");
+        done();
+      });
+  });
+
+  // 11
+  test("Update an issue with an invalid _id", function (done) {
+    chai
+      .request(server)
+      .put("/api/issues/test")
+      .send({ _id: "random_id", issue_title: "Test Title Updated" })
+      .end(function (error, res) {
+        assert.equal(res.status, 200);
+        assert.isObject(res.body);
+        assert.equal(res.body.error, "could not update");
+        done();
+      });
+  });
 });
