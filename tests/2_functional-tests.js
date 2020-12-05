@@ -231,4 +231,18 @@ suite("Functional Tests", function () {
         });
     });
   });
+
+  // 13
+  test("Delete an issue with an invalid _id", function (done) {
+    chai
+      .request(server)
+      .delete("/api/issues/test")
+      .send({ _id: "random_id" })
+      .end(function (error, res) {
+        assert.equal(res.status, 200);
+        assert.isObject(res.body);
+        assert.equal(res.body.error, "could not delete");
+        done();
+      });
+  });
 });
