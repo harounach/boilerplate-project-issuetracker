@@ -72,8 +72,17 @@ module.exports = {
   },
 
   // Delete an issue
-  deleteIssue: function (filterObj, done) {
-    // TODO
+  deleteIssue: function (issueId, done) {
+    Issue.findByIdAndRemove(issueId, (err, data) => {
+      if (err) {
+        /* FAILURE */
+        console.error(err);
+        done(err);
+      } else {
+        /* SUCCESS */
+        done(null, data);
+      }
+    });
   },
 
   // Get all issues

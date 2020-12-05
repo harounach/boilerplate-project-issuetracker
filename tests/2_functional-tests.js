@@ -205,4 +205,30 @@ suite("Functional Tests", function () {
         done();
       });
   });
+
+  // 12
+  test("Delete an issue", function (done) {
+    let test_data = {
+      issue_title: "Test Title",
+      issue_text: "Test Text",
+      created_by: "Haroun",
+    };
+
+    // Add issue
+    IssueDAO.createIssue(test_data, (err, added_data) => {
+      // Delete issue
+      chai
+        .request(server)
+        .delete("/api/issues/test")
+        .send({
+          _id: added_data._id,
+        })
+        .end(function (error, res) {
+          assert.equal(res.status, 200);
+          assert.isObject(res.body);
+          assert.equal(res.body.result, "successfully deleted");
+          done();
+        });
+    });
+  });
 });
