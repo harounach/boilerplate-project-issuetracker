@@ -19,8 +19,8 @@ let issueSchema = new mongoose.Schema(
     assigned_to: String,
     status_text: String,
     open: Boolean,
-    created_on: Date,
-    updated_on: Date,
+    created_on: String,
+    updated_on: String,
     project: String,
   },
   // options
@@ -50,9 +50,9 @@ module.exports = {
 
   // Update an issue
   updateIssue: function (issueId, updateObj, done) {
-    Issue.findByIdAndUpdate(
+    Issue.findOneAndUpdate(
       /* filter */
-      issueId,
+      { _id: issueId },
       /* update object */
       updateObj,
       /* options */

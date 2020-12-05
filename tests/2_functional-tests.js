@@ -120,6 +120,7 @@ suite("Functional Tests", function () {
       issue_title: "Test Title",
       issue_text: "Test Text",
       created_by: "Haroun",
+      created_on: new Date().toISOString(),
     };
 
     IssueDAO.createIssue(test_data, (err, added_data) => {

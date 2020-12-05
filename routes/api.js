@@ -40,30 +40,30 @@ module.exports = function (app) {
         !req.body.created_by
       ) {
         return res.json({ error: "required field(s) missing" });
+      } else {
+        let project = req.params.project;
+        let issueObj = {};
+        issueObj["issue_title"] = req.body.issue_title;
+        issueObj["issue_text"] = req.body.issue_text;
+        issueObj["created_by"] = req.body.created_by;
+        issueObj["assigned_to"] = req.body.assigned_to || "";
+        issueObj["status_text"] = req.body.status_text || "";
+        issueObj["open"] = true;
+        issueObj["created_on"] = new Date().toISOString();
+        issueObj["updated_on"] = new Date().toISOString();
+        issueObj["project"] = project;
+
+        // now insert the issue
+        IssueDAO.createIssue(issueObj, (err, data) => {
+          if (err) {
+            console.error(err);
+            res.json({ error: "Something went wrong" });
+          } else {
+            console.log(data);
+            res.json(data);
+          }
+        });
       }
-
-      let project = req.params.project;
-      let issueObj = {};
-      issueObj["issue_title"] = req.body.issue_title;
-      issueObj["issue_text"] = req.body.issue_text;
-      issueObj["created_by"] = req.body.created_by;
-      issueObj["assigned_to"] = req.body.assigned_to || "";
-      issueObj["status_text"] = req.body.status_text || "";
-      issueObj["open"] = true;
-      issueObj["created_on"] = new Date().toUTCString();
-      issueObj["updated_on"] = new Date().toUTCString();
-      issueObj["project"] = project;
-
-      // now insert the issue
-      IssueDAO.createIssue(issueObj, (err, data) => {
-        if (err) {
-          console.error(err);
-          res.json({ error: "Something went wrong" });
-        } else {
-          console.log(data);
-          res.json(data);
-        }
-      });
     })
 
     .put(function (req, res) {
@@ -71,25 +71,27 @@ module.exports = function (app) {
       let updateObj = {};
       if (!req.body._id) {
         res.json({ error: "missing _id" });
-      }
-      console.log(req.body);
-      //Object.assign(updateObj, req.body);
-      updateObj = makeUpdateObj(req.body);
-      delete updateObj._id;
-      if (Object.keys(updateObj).length < 1) {
-        res.json({
-          error: "no update field(s) sent",
-          _id: req.body._id,
-        });
       } else {
-        updateObj["updated_on"] = new Date().toUTCString();
-        IssueDAO.updateIssue(req.body._id, updateObj, (err, data) => {
-          if (err) {
-            res.json({ error: "could not update", _id: req.body._id });
-          } else {
-            res.json({ result: "successfully updated", _id: data._id });
-          }
-        });
+        console.log(req.body);
+        //Object.assign(updateObj, req.body);
+        updateObj = makeUpdateObj(req.body);
+        delete updateObj._id;
+        if (Object.keys(updateObj).length < 1) {
+          res.json({
+            error: "no update field(s) sent",
+            _id: req.body._id,
+          });
+        } else {
+          updateObj["updated_on"] = new Date().toISOString();
+          IssueDAO.updateIssue(req.body._id, updateObj, (err, data) => {
+            if (err || data === null) {
+              res.json({ error: "could not update", _id: req.body._id });
+            } else {
+              console.log(data);
+              res.json({ result: "successfully updated", _id: req.body._id });
+            }
+          });
+        }
       }
     })
 
@@ -99,7 +101,7 @@ module.exports = function (app) {
         res.json({ error: "missing _id" });
       } else {
         IssueDAO.deleteIssue(req.body._id, (err, data) => {
-          if (err) {
+          if (err || data === null) {
             res.json({ error: "could not delete", _id: req.body._id });
           } else {
             res.json({ result: "successfully deleted", _id: data._id });
